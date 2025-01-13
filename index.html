@@ -5,16 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Центрированный заголовок</title>
+  <link rel="icon" href="icon.png" type="image/x-icon">
+  <title>SMOTE</title>
 </head>
 <body>
   <h1>SMOTE</h1>
   <div id="plane"></div>
   <div class="controls">
-    <button id="toggle-color">Сменить цвет (синий)</button>
-    <input id="refresh-interval" type="number" placeholder="Скорость" min="1">
+    <button id="change-color">Сменить цвет (синий)</button>
+    <input id="speed" type="number" placeholder="Скорость" min="1" max="100">
     <input id="dots-number" type="number" placeholder="Количество" min="1">
-    <button id="set-interval">Запустить</button>
+    <button id="run-button">Запустить</button>
   </div>
   <script src="script.js"></script>
 </body>

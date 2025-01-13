@@ -1,18 +1,19 @@
 const plane = document.getElementById('plane');
-let lastPoint = null;
-const toggleColorButton = document.getElementById('toggle-color');
-const refreshInput = document.getElementById('refresh-interval');
-const setIntervalButton = document.getElementById('set-interval');
+const changeColorButton = document.getElementById('change-color');
+const speedInput = document.getElementById('speed');
+const numberOfDotsInput = document.getElementById('dots-number');
+const runButton = document.getElementById('run-button');
 
 let points = [];
 let currentColor = 'blue';
 let refreshIntervalId = null;
+let numberOfDots = 1;
+let speed = 1;
 
 plane.addEventListener('click', (event) => {
   const x = event.offsetX;
   const y = event.offsetY;
-  console.log(`x = ${x}, y = ${y} plx = ${plane.offsetX}`)
-
+  
   const point = document.createElement('div');
   point.className = 'point';
   point.style.backgroundColor = currentColor;
@@ -21,17 +22,12 @@ plane.addEventListener('click', (event) => {
 
   plane.appendChild(point);
 
-  if (lastPoint) {
-    drawLine(lastPoint.x, lastPoint.y, x, y);
-  }
-
-  lastPoint = { x, y };
-  points.push({x,y});
+  points.push({x,y,color : point.style.backgroundColor});
 });
 
-toggleColorButton.addEventListener('click', () => {
+changeColorButton.addEventListener('click', () => {
   currentColor = currentColor === 'blue' ? 'red' : 'blue';
-  toggleColorButton.textContent = `Сменить цвет точек (${currentColor === 'blue' ? 'синий' : 'красный'})`;
+  changeColorButton.textContent = `Сменить цвет точек (${currentColor === 'blue' ? 'синий' : 'красный'})`;
 });
 
 function drawLine(x1, y1, x2, y2) {
@@ -52,21 +48,46 @@ function drawLine(x1, y1, x2, y2) {
 }
 
 
-setIntervalButton.addEventListener('click', () => {
-  const interval = parseInt(refreshInput.value, 10);
-
-  if (!isNaN(interval) && interval > 0) {
-    if (refreshIntervalId) {
-      clearInterval(refreshIntervalId);
+runButton.addEventListener('click', () => {
+  const newSpeed = parseInt(speedInput.value, 10);
+  if (!isNaN(newSpeed)) {
+    if (newSpeed <= 0 || newSpeed > 100) {
+      alert(`Введите коректное значение скорости (>0 и <= 100)`)
+    } else {
+      speed = newSpeed
     }
-
-    refreshIntervalId = setInterval(() => {
-      location.reload();
-    }, interval * 1000);
-
-    alert(`Интервал обновления страницы установлен: ${interval} секунд.`);
-  } else {
-    alert('Введите корректное значение интервала (число больше 0).');
+  }
+  const newNumberOfDots = parseInt(numberOfDotsInput.value, 10);
+  if (!isNaN(newNumberOfDots)) {
+    if (newNumberOfDots <= 0) {
+      alert(`Введите коректное значение количества новых точек (>0 и <= 100)`)
+    } else {
+      numberOfDots = newNumberOfDots
+    }
   }
 });
 
+async function worker() {
+  while (true) {
+    if (numberOfDots <= 0) {
+      numberOfDots = 0
+      await new Promise(resolve => setTimeout(resolve, Math.floor(1000 / speed)));
+      continue
+    }
+    numberOfDots--
+    const x = Math.floor(Math.random() * plane.offsetWidth);
+    const y = Math.floor(Math.random() * plane.offsetHeight);
+
+    const point = document.createElement('div');
+    point.className = 'point';
+    point.style.backgroundColor = currentColor;
+    point.style.left = `${x}px`;
+    point.style.top = `${y}px`;
+
+    plane.appendChild(point);
+
+    await new Promise(resolve => setTimeout(resolve, Math.floor(1000 / speed)));
+  }
+}
+
+worker();
