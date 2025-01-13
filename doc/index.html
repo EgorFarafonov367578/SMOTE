@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Алгоритм SMOTE</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            color: #333;
+        }
+        h1, h2 {
+            color: #0056b3;
+        }
+        ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        img {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Алгоритм SMOTE</h1>
+
+    <h2>Что такое SMOTE?</h2>
+    <p>SMOTE (неправильное название Synthetic Minority Oversampling Technique) — это популярный алгоритм, используемый для решения проблемы несбалансированных наборов данных путем генерации синтетических образцов для меньшинства. Цель алгоритма — сбалансировать данные для улучшения производительности моделей машинного обучения.</p>
+
+    <h2>Как работает SMOTE?</h2>
+    <p>Алгоритм SMOTE создает новые синтетические образцы следующим образом:</p>
+    <ol>
+        <li>Выбирается образец и ее <strong>k ближайших соседей</strong> из этого класса.</li>
+        <li>Среди соседей случайным образом выбирается второй образец.</li>
+        <li>На отрезке между этими двумя образцами создается новый синтетический образец.</li>
+    </ol>
+
+    <img src="../img/img.webp" alt="Описание изображения">
+
+
+    <h2>Гиперпараметры SMOTE</h2>
+    <p>Основные гиперпараметры алгоритма SMOTE:</p>
+    <ul>
+        <li><strong>k_neighbors:</strong> Количество ближайших соседей, используемых для генерации синтетических образцов (по умолчанию — 5).</li>
+    </ul>
+
+    <footer>
+        <p>Made possible by Egor Farafonov</p>
+    </footer>
+</body>
+</html>

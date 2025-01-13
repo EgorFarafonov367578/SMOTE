@@ -103,6 +103,8 @@ async function worker() {
     }
     numberOfDots--
     let dots = [...points]
+    let color = currentColor
+    dots = dots.filter((x) => (x.color == color))
     if (dots.length == 0) {
       continue
     }
@@ -115,7 +117,7 @@ async function worker() {
         }
       }
       let dist = function(dot) {
-        return (dot1.x - dot.x) * (dot1.x - dot.x) + (dot1.y - dot.y) * (dot1.y - dot.y)
+        return Math.sqrt((dot1.x - dot.x) * (dot1.x - dot.x) + (dot1.y - dot.y) * (dot1.y - dot.y))
       }
       itsClan.sort(function(a,b){ return dist(a) - dist(b) })
       let knn = itsClan.slice(0,min(k,itsClan.length))
