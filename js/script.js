@@ -2,6 +2,7 @@ const plane = document.getElementById('plane');
 const changeColorButton = document.getElementById('change-color');
 const speedInput = document.getElementById('speed');
 const numberOfDotsInput = document.getElementById('dots-number');
+const kInput = document.getElementById('k-number');
 const runButton = document.getElementById('run-button');
 const stopButton = document.getElementById('stop-button');
 
@@ -11,6 +12,7 @@ let refreshIntervalId = null;
 let numberOfDots = 0;
 let speed = 1;
 let numberOfShownDots = 0;
+let k = 5;
 
 plane.addEventListener('click', (event) => {
   const x = event.offsetX;
@@ -74,9 +76,17 @@ runButton.addEventListener('click', () => {
   const newNumberOfDots = parseInt(numberOfDotsInput.value, 10);
   if (!isNaN(newNumberOfDots)) {
     if (newNumberOfDots <= 0) {
-      alert(`Введите коректное значение количества новых точек (>0 и <= 100)`)
+      alert(`Введите коректное значение количества новых точек (>0)`)
     } else {
       numberOfDots = newNumberOfDots
+    }
+  }
+  const newK = parseInt(kInput.value, 10)
+  if (!isNaN(newK)) {
+    if (newK <= 0) {
+      alert(`Введите коректное значение гиперпараметра k (>0)`)
+    } else {
+      k = newK
     }
   }
 });
@@ -105,16 +115,29 @@ async function worker() {
           itsClan.push(dots[i])
         }
       }
-      if (itsClan.length == 0) {
+      let dist = function(dot) {
+        return (dot1.x - dot.x) * (dot1.x - dot.x) + (dot1.y - dot.y) * (dot1.y - dot.y)
+      }
+      itsClan.sort(function(a,b){ return dist(a) - dist(b) })
+      let knn = itsClan.slice(0,min(k,itsClan.length))
+      if (knn.length == 0) {
         return
       }
-      const dot2 = itsClan[Math.floor(Math.random()*itsClan.length)];
+      const dot2 = knn[Math.floor(Math.random()*knn.length)];
       await operationOnDot(dot2, async() => {
         await operationOnLine(dot1,dot2, async() => {
           await createDotBetween(dot1,dot2);
         })
       })
     })
+  }
+}
+
+function min(a,b) {
+  if (a < b) {
+    return a
+  } else {
+    return b
   }
 }
 

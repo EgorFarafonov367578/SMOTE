@@ -75,6 +75,10 @@ button:hover {
   width: 105px;
 }
 
+#k-number {
+  width: 30px;
+}
+
 #stop-button {
   background-color: #ca5454;
 }
