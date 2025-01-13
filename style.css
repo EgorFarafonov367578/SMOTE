@@ -29,6 +29,14 @@ h1, #plane {
   position: absolute;
   transform: translate(-50%, -50%);
   z-index: 10;
+  color: white; /* Цвет текста внутри точки */
+  font-size: 14px; /* Размер текста */
+  font-weight: bold; /* Полужирный текст */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
 }
 
 .line {

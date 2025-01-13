@@ -9,6 +9,7 @@ let currentColor = 'blue';
 let refreshIntervalId = null;
 let numberOfDots = 0;
 let speed = 1;
+let numberOfShownDots = 0;
 
 plane.addEventListener('click', (event) => {
   const x = event.offsetX;
@@ -34,9 +35,14 @@ function createDot(x,y,color) {
   plane.appendChild(point);
 
   points.push(dot);
+  return dot
 }
 
-function drawLine(x1, y1, x2, y2) {
+function createLine(dot1, dot2) {
+  const x1 = dot1.x;
+  const x2 = dot2.x;
+  const y1 = dot1.y;
+  const y2 = dot2.y;
   const dx = x2 - x1;
   const dy = y2 - y1;
   const length = Math.sqrt(dx * dx + dy * dy);
@@ -51,6 +57,7 @@ function drawLine(x1, y1, x2, y2) {
   line.style.transform = `rotate(${angle}deg)`;
 
   plane.appendChild(line);
+  return line
 }
 
 
@@ -85,25 +92,24 @@ async function worker() {
     if (dots.length == 0) {
       continue
     }
-    const dot = dots[Math.floor(Math.random()*dots.length)];
-    const point = getPoint(dot)
-    point.style.width = "20px"
-    point.style.height = "20px"
-    await sleep();
-    let itsClan = []
-    for (let i = 0; i < dots.length; i++) {
-      if (dots[i].color == dot.color && dots[i] != dot) {
-        itsClan.push(dots[i])
+    const dot1 = dots[Math.floor(Math.random()*dots.length)];
+    await operationOnDot(dot1, async() => {
+      let itsClan = []
+      for (let i = 0; i < dots.length; i++) {
+        if (dots[i].color == dot1.color && dots[i] != dot1) {
+          itsClan.push(dots[i])
+        }
       }
-    }
-    if (itsClan.length == 0) {
-      continue
-    }
-    const pair = itsClan[Math.floor(Math.random()*itsClan.length)];
-
-    createDotBetween(dot,pair)
-    point.style.width = "10px"
-    point.style.height = "10px"
+      if (itsClan.length == 0) {
+        return
+      }
+      const dot2 = itsClan[Math.floor(Math.random()*itsClan.length)];
+      await operationOnDot(dot2, async() => {
+        await operationOnLine(dot1,dot2, async() => {
+          await createDotBetween(dot1,dot2);
+        })
+      })
+    })
   }
 }
 
@@ -119,24 +125,37 @@ async function operationOnDot(dot,action) {
   const point = getPoint(dot)
   point.style.width = "20px"
   point.style.height = "20px"
+  point.innerText=`${numberOfShownDots+1}`
+  numberOfShownDots++
   await sleep();
-  action();
+  await action();
   point.style.width = "10px"
   point.style.height = "10px"
+  point.innerText=""
+  numberOfShownDots--
+}
+
+async function operationOnLine(dot1, dot2, action) {
+  const line = createLine(dot1,dot2);
+  await sleep();
+  await action();
+  line.parentNode.removeChild(line);
 }
 
 function sleep() {
   return new Promise(resolve => setTimeout(resolve, Math.floor(1000 / speed)))
 }
 
-function createDotBetween(dot1,dot2) {
+async function createDotBetween(dot1,dot2) {
   const dx = dot2.x - dot1.x
   const dy = dot2.y - dot1.y
   const alf = Math.random()
   const x = dot1.x + dx * alf
   const y = dot1.y + dy * alf
 
-  createDot(x,y,dot1.color)
+  let dot = createDot(x,y,dot1.color);
+  await operationOnDot(dot, async () => {
+  })
 }
 
 worker();
