@@ -7,7 +7,7 @@ const runButton = document.getElementById('run-button');
 let points = [];
 let currentColor = 'blue';
 let refreshIntervalId = null;
-let numberOfDots = 1;
+let numberOfDots = 0;
 let speed = 1;
 
 plane.addEventListener('click', (event) => {
@@ -69,24 +69,43 @@ runButton.addEventListener('click', () => {
 
 async function worker() {
   while (true) {
+    await new Promise(resolve => setTimeout(resolve, Math.floor(1000 / speed)));
     if (numberOfDots <= 0) {
       numberOfDots = 0
-      await new Promise(resolve => setTimeout(resolve, Math.floor(1000 / speed)));
       continue
     }
     numberOfDots--
-    const x = Math.floor(Math.random() * plane.offsetWidth);
-    const y = Math.floor(Math.random() * plane.offsetHeight);
+    let dots = [...points]
+    if (dots.length == 0) {
+      continue
+    }
+    const dot = dots[Math.floor(Math.random()*dots.length)];
+    let itsClan = []
+    for (let i = 0; i < dots.length; i++) {
+      if (dots[i].color == dot.color && dots[i] != dot) {
+        itsClan.push(dots[i])
+      }
+    }
+    if (itsClan.length == 0) {
+      continue
+    }
+    const pair = itsClan[Math.floor(Math.random()*itsClan.length)];
+
+    const dx = pair.x - dot.x
+    const dy = pair.y - dot.y
+    const alf = Math.random()
+    const x = dot.x + dx * alf
+    const y = dot.y + dy * alf
 
     const point = document.createElement('div');
     point.className = 'point';
-    point.style.backgroundColor = currentColor;
+    point.style.backgroundColor = dot.color;
     point.style.left = `${x}px`;
     point.style.top = `${y}px`;
 
     plane.appendChild(point);
 
-    await new Promise(resolve => setTimeout(resolve, Math.floor(1000 / speed)));
+    points.push({x,y,color : point.style.backgroundColor});
   }
 }
 
