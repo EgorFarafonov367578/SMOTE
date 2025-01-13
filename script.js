@@ -13,22 +13,28 @@ let speed = 1;
 plane.addEventListener('click', (event) => {
   const x = event.offsetX;
   const y = event.offsetY;
-  
-  const point = document.createElement('div');
-  point.className = 'point';
-  point.style.backgroundColor = currentColor;
-  point.style.left = `${x}px`;
-  point.style.top = `${y}px`;
 
-  plane.appendChild(point);
-
-  points.push({x,y,color : point.style.backgroundColor});
+  createDot(x,y,currentColor)
 });
 
 changeColorButton.addEventListener('click', () => {
   currentColor = currentColor === 'blue' ? 'red' : 'blue';
   changeColorButton.textContent = `Сменить цвет точек (${currentColor === 'blue' ? 'синий' : 'красный'})`;
 });
+
+function createDot(x,y,color) {
+  var dot = {x,y,color}
+  const point = document.createElement('div');
+  point.className = 'point';
+  point.style.backgroundColor = color;
+  point.style.left = `${x}px`;
+  point.style.top = `${y}px`;
+  point.id = dotToPointId(dot)
+
+  plane.appendChild(point);
+
+  points.push(dot);
+}
 
 function drawLine(x1, y1, x2, y2) {
   const dx = x2 - x1;
@@ -69,7 +75,7 @@ runButton.addEventListener('click', () => {
 
 async function worker() {
   while (true) {
-    await new Promise(resolve => setTimeout(resolve, Math.floor(1000 / speed)));
+    await sleep();
     if (numberOfDots <= 0) {
       numberOfDots = 0
       continue
@@ -80,6 +86,10 @@ async function worker() {
       continue
     }
     const dot = dots[Math.floor(Math.random()*dots.length)];
+    const point = getPoint(dot)
+    point.style.width = "20px"
+    point.style.height = "20px"
+    await sleep();
     let itsClan = []
     for (let i = 0; i < dots.length; i++) {
       if (dots[i].color == dot.color && dots[i] != dot) {
@@ -91,22 +101,42 @@ async function worker() {
     }
     const pair = itsClan[Math.floor(Math.random()*itsClan.length)];
 
-    const dx = pair.x - dot.x
-    const dy = pair.y - dot.y
-    const alf = Math.random()
-    const x = dot.x + dx * alf
-    const y = dot.y + dy * alf
-
-    const point = document.createElement('div');
-    point.className = 'point';
-    point.style.backgroundColor = dot.color;
-    point.style.left = `${x}px`;
-    point.style.top = `${y}px`;
-
-    plane.appendChild(point);
-
-    points.push({x,y,color : point.style.backgroundColor});
+    createDotBetween(dot,pair)
+    point.style.width = "10px"
+    point.style.height = "10px"
   }
+}
+
+function getPoint(dot) {
+  return document.getElementById(dotToPointId(dot))
+}
+
+function dotToPointId(dot) {
+  return `${dot.x}-${dot.y}-${dot.color}`
+}
+
+async function operationOnDot(dot,action) {
+  const point = getPoint(dot)
+  point.style.width = "20px"
+  point.style.height = "20px"
+  await sleep();
+  action();
+  point.style.width = "10px"
+  point.style.height = "10px"
+}
+
+function sleep() {
+  return new Promise(resolve => setTimeout(resolve, Math.floor(1000 / speed)))
+}
+
+function createDotBetween(dot1,dot2) {
+  const dx = dot2.x - dot1.x
+  const dy = dot2.y - dot1.y
+  const alf = Math.random()
+  const x = dot1.x + dx * alf
+  const y = dot1.y + dy * alf
+
+  createDot(x,y,dot1.color)
 }
 
 worker();
