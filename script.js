@@ -3,6 +3,7 @@ const changeColorButton = document.getElementById('change-color');
 const speedInput = document.getElementById('speed');
 const numberOfDotsInput = document.getElementById('dots-number');
 const runButton = document.getElementById('run-button');
+const stopButton = document.getElementById('stop-button');
 
 let points = [];
 let currentColor = 'blue';
@@ -78,6 +79,10 @@ runButton.addEventListener('click', () => {
       numberOfDots = newNumberOfDots
     }
   }
+});
+
+stopButton.addEventListener('click', () => {
+  numberOfDots = 0;
 });
 
 async function worker() {

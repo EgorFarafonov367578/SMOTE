@@ -74,3 +74,11 @@ button:hover {
 #dots-number {
   width: 105px;
 }
+
+#stop-button {
+  background-color: #ca5454;
+}
+
+#stop-button:hover {
+  background-color: #dc3939;
+}
