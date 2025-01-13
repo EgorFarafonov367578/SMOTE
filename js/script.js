@@ -8,7 +8,6 @@ const stopButton = document.getElementById('stop-button');
 
 let points = [];
 let currentColor = 'blue';
-let refreshIntervalId = null;
 let numberOfDots = 0;
 let speed = 1;
 let numberOfShownDots = 0;
