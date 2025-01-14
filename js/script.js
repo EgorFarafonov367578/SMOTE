@@ -5,6 +5,7 @@ const numberOfDotsInput = document.getElementById('dots-number');
 const kInput = document.getElementById('k-number');
 const runButton = document.getElementById('run-button');
 const stopButton = document.getElementById('stop-button');
+const clearButton = document.getElementById('clear-button');
 
 let points = [];
 let currentColor = 'blue';
@@ -12,13 +13,28 @@ let numberOfDots = 0;
 let speed = 1;
 let numberOfShownDots = 0;
 let k = 5;
+let isStoping = false;
 
 plane.addEventListener('click', (event) => {
   const x = event.offsetX;
   const y = event.offsetY;
+  if (event.target != plane) {
+    return;
+  }
+  console.log(`x: ${x}, y ${y}, event: ${event.layerX}`)
 
   createDot(x,y,currentColor)
 });
+
+clearButton.addEventListener('click', async () => {
+  numberOfDots = 0;
+  isStoping = true;
+  await new Promise(resolve => setTimeout(resolve, Math.floor(1000 / speed)));
+  await new Promise(resolve => setTimeout(resolve, Math.floor(1000 / speed)));
+  points = [];
+  plane.innerHTML = '';
+  isStoping = false;
+})
 
 changeColorButton.addEventListener('click', () => {
   currentColor = currentColor === 'blue' ? 'red' : 'blue';
@@ -172,6 +188,9 @@ async function operationOnLine(dot1, dot2, action) {
 }
 
 function sleep() {
+  if (isStoping) {
+    return new Promise(resolve => setTimeout(resolve, 0))
+  }
   return new Promise(resolve => setTimeout(resolve, Math.floor(1000 / speed)))
 }
 
