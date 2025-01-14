@@ -22,7 +22,7 @@ plane.addEventListener('click', (event) => {
 
 changeColorButton.addEventListener('click', () => {
   currentColor = currentColor === 'blue' ? 'red' : 'blue';
-  changeColorButton.textContent = `Сменить цвет точек (${currentColor === 'blue' ? 'синий' : 'красный'})`;
+  changeColorButton.textContent = `${currentColor === 'blue' ? 'Синий' : 'Красный'}`;
 });
 
 function createDot(x,y,color) {

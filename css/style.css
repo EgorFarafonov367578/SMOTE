@@ -58,6 +58,11 @@ button, input {
   border-radius: 5px;
 }
 
+.button-def {
+  padding: 10px;
+  font-size: 16px;
+}
+
 button {
   cursor: pointer;
   background-color: #f8f8f8;
@@ -68,7 +73,7 @@ button:hover {
 }
 
 #speed {
-  width: 85px;
+  width: 45px;
 }
 
 #dots-number {
@@ -76,7 +81,7 @@ button:hover {
 }
 
 #k-number {
-  width: 30px;
+  width: 40px;
 }
 
 #stop-button {
